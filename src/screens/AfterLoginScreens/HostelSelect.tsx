@@ -1,4 +1,4 @@
-import {Dimensions, StyleSheet, Text, View} from 'react-native';
+import {Dimensions, StyleSheet, Text, View, FlatList} from 'react-native';
 import React, {useState} from 'react';
 
 import {Button, ListItem, TextInput} from '@react-native-material/core';
@@ -15,9 +15,6 @@ const HostelSelect = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootHomeStackParamList>>();
 
-  const [hostelSelected, setHostelSelected] = useState<HostelData>(
-    hostelNames[0],
-  );
   const [currHostelList, setcurrHostelList] =
     useState<HostelData[]>(hostelNames);
   const handleSearch = (text: string) => {
@@ -29,28 +26,28 @@ const HostelSelect = () => {
   };
 
   const handleHostelSelect = (hostel: HostelData) => {
-    setHostelSelected(hostel);
     navigation.replace('HomeScreenNav', {
       screen: 'HomeScreen',
       params: {hostelSelected: hostel.title},
     });
-    
   };
 
   return (
     <View>
       <TextInput label="Search Hostel" onChangeText={handleSearch} />
       <View>
-        {currHostelList.map(hostel => {
-          return (
-            <ListItem
-              title={hostel.title}
-              onPress={() => {
-                handleHostelSelect(hostel);
-              }}
-            />
-          );
-        })}
+        <FlatList
+          data={currHostelList}
+          renderItem={({item, index}) => {
+            return (
+              <ListItem
+                key={index}
+                onPress={() => handleHostelSelect(item)}
+                title={item.title}
+              />
+            );
+          }}
+        />
       </View>
     </View>
   );
