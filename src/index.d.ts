@@ -19,3 +19,14 @@ export type CartData = {
   quantity: number,
   foodType: string,
 }
+
+export type Orders = {
+  orderId: number;
+  title: string;
+  price: number;
+  description: string;
+  hostel: HostelData | undefined;
+  time: Date;
+  orderStatus: string;
+}
+ 

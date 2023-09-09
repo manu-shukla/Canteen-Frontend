@@ -2,7 +2,8 @@ import {StyleSheet, Text, View} from 'react-native';
 import React, {PropsWithChildren, useEffect, useState} from 'react';
 import * as Yup from 'yup';
 import {Formik} from 'formik';
-import {Button, TextInput} from '@react-native-material/core';
+// import {Button} from '@react-native-material/core';
+import {TextInput, Button} from 'react-native-paper';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
@@ -14,12 +15,15 @@ import {
   AutocompleteDropdown,
 } from 'react-native-autocomplete-dropdown';
 import {hostelNames} from '../constants/hostelNames';
+import {HostelData} from '..';
 
 type SignupProps = NativeStackScreenProps<RootStackParamList, 'Signup'>;
 
-type userDetailsProps = PropsWithChildren<{
-  userEmail: string;
-  userName: string;
+type UserDataProps = PropsWithChildren<{
+  email: string;
+  name: string;
+  hostelName: HostelData;
+  roomNo: string;
 }>;
 const digitsOnly = (value: string | undefined) =>
   /^\d+$/.test(value!) || value!.length === 0;
@@ -27,7 +31,7 @@ const digitsOnly = (value: string | undefined) =>
 const SignupFormSchema = Yup.object().shape({
   email: Yup.string().email().required(),
   name: Yup.string().required(),
-  hostelName: Yup.string().required('Enter a valid Hostel Name'),
+  hostelName: Yup.mixed<HostelData>().required('Enter a valid Hostel Name'),
   roomNo: Yup.string()
     .required('Room No. is required')
     .test('roomNo', 'Enter a valid Room No', digitsOnly)
@@ -36,7 +40,12 @@ const SignupFormSchema = Yup.object().shape({
 
 const SignupScreen = ({route, navigation}: SignupProps) => {
   const [loading, setLoading] = useState(false);
-  const {userEmail, userName}: userDetailsProps = route.params;
+  const [userData, setuserData] = useState<UserDataProps>({
+    email: route.params?.userEmail,
+    name: route.params?.userName,
+    hostelName: {title: '', id: ''},
+    roomNo: '',
+  });
 
   const signOut = async () => {
     try {
@@ -47,12 +56,11 @@ const SignupScreen = ({route, navigation}: SignupProps) => {
   };
 
   useEffect(() => {
-    console.log(userEmail, userName);
     Snackbar.show({
       text: 'User Not Registered! Register First.',
       duration: Snackbar.LENGTH_LONG,
     });
-  }, [userEmail, userName]);
+  }, [userData]);
 
   return (
     <AutocompleteDropdownContextProvider>
@@ -62,12 +70,7 @@ const SignupScreen = ({route, navigation}: SignupProps) => {
         </View>
         <Formik
           validationSchema={SignupFormSchema}
-          initialValues={{
-            email: userEmail,
-            name: userName,
-            hostelName: '',
-            roomNo: '',
-          }}
+          initialValues={userData}
           onSubmit={values => {
             setLoading(true);
             console.log(values);
@@ -114,7 +117,7 @@ const SignupScreen = ({route, navigation}: SignupProps) => {
                 onBlur={handleBlur('hostelName')}
                 onChangeText={handleChange('hostelName')}
                 onSelectItem={value =>
-                  setFieldValue('hostelName', value?.title)
+                  setFieldValue('hostelName', value)
                 }
                 textInputProps={{
                   placeholder: 'Search Hostel',
@@ -126,19 +129,11 @@ const SignupScreen = ({route, navigation}: SignupProps) => {
                 dataSet={hostelNames}
                 containerStyle={styles.dropdownContainer}
                 inputContainerStyle={styles.inputContainer}
-                // suggestionsListTextStyle={styles.suggestionListText}
               />
               <View style={styles.hairline} />
 
-              {/* <TextInput
-                onChangeText={handleChange('hostelName')}
-                onBlur={handleBlur('hostelName')}
-                value={values.hostelName}
-                label="Hostel Name"
-                style={styles.formFields}
-              /> */}
               {touched.hostelName && errors.hostelName && (
-                <Text style={styles.errors}>{errors.hostelName}</Text>
+                <Text style={styles.errors}>{errors.hostelName.title}</Text>
               )}
               <TextInput
                 onChangeText={handleChange('roomNo')}
@@ -146,6 +141,7 @@ const SignupScreen = ({route, navigation}: SignupProps) => {
                 value={values.roomNo}
                 keyboardType="number-pad"
                 label="Room No"
+                error={touched.roomNo && errors.roomNo ? true : false}
                 style={styles.formFields}
               />
               {touched.roomNo && errors.roomNo && (
@@ -153,17 +149,20 @@ const SignupScreen = ({route, navigation}: SignupProps) => {
               )}
 
               <Button
-                title="Sign Up"
                 loading={loading}
+                disabled={loading}
+                mode="contained"
                 style={styles.buttons}
-                loadingIndicatorPosition="overlay"
-                onPress={handleSubmit}
-              />
+                onPress={handleSubmit}>
+                Sign Up
+              </Button>
               <Button
-                title="Log Out"
+                mode="contained-tonal"
+                disabled={loading}
                 style={styles.buttons}
-                onPress={handleReset}
-              />
+                onPress={handleReset}>
+                Log Out
+              </Button>
             </View>
           )}
         </Formik>
@@ -175,9 +174,7 @@ const SignupScreen = ({route, navigation}: SignupProps) => {
 export default SignupScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    // justifyContent: 'center',
-  },
+  container: {},
   formContainer: {
     margin: 18,
   },
