@@ -1,4 +1,4 @@
-import {Dimensions, StyleSheet, Text, View, FlatList} from 'react-native';
+import {Dimensions, FlatList, StyleSheet, Text, View} from 'react-native';
 import React, {useState} from 'react';
 
 import {Button, ListItem, TextInput} from '@react-native-material/core';
@@ -41,6 +41,7 @@ const HostelSelect = () => {
           renderItem={({item, index}) => {
             return (
               <ListItem
+                
                 key={index}
                 onPress={() => handleHostelSelect(item)}
                 title={item.title}
