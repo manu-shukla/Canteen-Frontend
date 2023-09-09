@@ -35,7 +35,7 @@ const HomeScreenNav = () => {
           tabBarIcon: () => (
             <MaterialCommunityIcons name="rice" color="black" size={26} />
           ),
-          title: 'My Orders',
+          title: 'Orders',
         }}
       />
       <HomeTab.Screen
@@ -45,7 +45,7 @@ const HomeScreenNav = () => {
           tabBarIcon: () => (
             <MaterialCommunityIcons name="account" color="black" size={26} />
           ),
-          title: 'Your Profile',
+          title: 'Profile',
         }}
       />
     </HomeTab.Navigator>

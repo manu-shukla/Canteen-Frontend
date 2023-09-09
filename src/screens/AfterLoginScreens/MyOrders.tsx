@@ -1,19 +1,48 @@
-import {StyleSheet, Text, View, Dimensions} from 'react-native';
+import {StyleSheet} from 'react-native';
 import React from 'react';
+import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+//Screens
+import CurrentOrders from './OrdersScreen/CurrentOrders';
+import PastOrders from './OrdersScreen/PastOrders';
+import {OrdersProvider} from '../../contexts/ordersContext';
+import {Appbar} from 'react-native-paper';
+
+const TopTabsOrders = createMaterialTopTabNavigator();
 
 const MyOrders = () => {
   return (
-    <View style={styles.container}>
-      <Text>MyOrders</Text>
-    </View>
+    <OrdersProvider>
+      <Appbar.Header>
+        <Appbar.Content title="My Orders" />
+      </Appbar.Header>
+
+      <TopTabsOrders.Navigator screenOptions={{}}>
+        <TopTabsOrders.Screen
+          name="CurrentOrders"
+          component={CurrentOrders}
+          options={{
+            title: 'Current Orders',
+          }}
+        />
+        <TopTabsOrders.Screen
+          name="PastOrders"
+          component={PastOrders}
+          options={{
+            title: 'Past Orders',
+          }}
+        />
+      </TopTabsOrders.Navigator>
+    </OrdersProvider>
   );
 };
 
 export default MyOrders;
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: 'blue',
-    height: Dimensions.get('window').height,
+  headingTxt: {
+    fontSize: 24,
+    color: 'black',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
