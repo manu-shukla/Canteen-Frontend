@@ -1,7 +1,7 @@
 import {Dimensions, StyleSheet, Text, View, FlatList} from 'react-native';
 import React, {useState} from 'react';
 
-import {Button, ListItem, TextInput} from '@react-native-material/core';
+import {Button, ListItem} from '@react-native-material/core';
 import {hostelNames} from '../../constants/hostelNames';
 import {HostelData} from '../..';
 import {
@@ -11,18 +11,23 @@ import {
 import {RootHomeStackParamList} from '../MainScreen';
 import {useNavigation} from '@react-navigation/native';
 
+import {Searchbar} from 'react-native-paper';
+
 const HostelSelect = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootHomeStackParamList>>();
 
   const [currHostelList, setcurrHostelList] =
     useState<HostelData[]>(hostelNames);
+  const [searchText, setSearchText  ] = useState<string>('');
+
   const handleSearch = (text: string) => {
     setcurrHostelList(
       hostelNames.filter(hostel => {
         return hostel.title.toLowerCase().includes(text.toLowerCase());
       }),
     );
+    setSearchText(text);
   };
 
   const handleHostelSelect = (hostel: HostelData) => {
@@ -34,7 +39,11 @@ const HostelSelect = () => {
 
   return (
     <View>
-      <TextInput label="Search Hostel" onChangeText={handleSearch} />
+      <Searchbar
+        placeholder="Search Hostel"
+        onChangeText={handleSearch}
+        value={searchText}
+      />
       <View>
         <FlatList
           data={currHostelList}
