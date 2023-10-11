@@ -2,9 +2,9 @@ import {StyleSheet} from 'react-native';
 import React from 'react';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 //Screens
-import CurrentOrders from './OrdersScreen/CurrentOrders';
-import PastOrders from './OrdersScreen/PastOrders';
-import {OrdersProvider} from '../../contexts/ordersContext';
+import CurrentOrders from './CurrentOrders';
+import PastOrders from './PastOrders';
+import {OrdersProvider} from '../../../contexts/ordersContext';
 import {Appbar} from 'react-native-paper';
 
 const TopTabsOrders = createMaterialTopTabNavigator();

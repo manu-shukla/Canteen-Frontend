@@ -1,24 +1,33 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React, {PropsWithChildren, useState} from 'react';
+import React, {PropsWithChildren, useEffect, useState} from 'react';
 import * as Yup from 'yup';
 import {Formik} from 'formik';
+import {TextInput, Button} from 'react-native-paper';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
-import {TextInput, Button, Avatar, Appbar} from 'react-native-paper';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {RootStackParamList} from '../../App';
+
+import Snackbar from 'react-native-snackbar';
 import {
   AutocompleteDropdownContextProvider,
   AutocompleteDropdown,
 } from 'react-native-autocomplete-dropdown';
+import {HostelData} from '../../';
 import {hostelNames} from '../../constants/hostelNames';
-import {HostelData} from '../..';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {RootStackParamList} from '../../App';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {useNavigation} from '@react-navigation/native';
 
+type SignupProps = NativeStackScreenProps<RootStackParamList, 'Signup'>;
+
+type UserDataProps = PropsWithChildren<{
+  email: string;
+  name: string;
+  hostelName: HostelData;
+  roomNo: string;
+}>;
 const digitsOnly = (value: string | undefined) =>
   /^\d+$/.test(value!) || value!.length === 0;
 
-const ProfileFormSchema = Yup.object().shape({
+const SignupFormSchema = Yup.object().shape({
   email: Yup.string().email().required(),
   name: Yup.string().required(),
   hostelName: Yup.mixed<HostelData>().required('Enter a valid Hostel Name'),
@@ -28,30 +37,15 @@ const ProfileFormSchema = Yup.object().shape({
     .max(3, 'Max value: 999'),
 });
 
-type UserDataProps = PropsWithChildren<{
-  email: string;
-  name: string;
-  hostelName: HostelData;
-  roomNo: string;
-}>;
-
-const Profile = () => {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-
+const SignupScreen = ({route, navigation}: SignupProps) => {
   const [loading, setLoading] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-
   const [userData, setuserData] = useState<UserDataProps>({
-    email: 'shukla.manu09@gmail.com',
-    name: 'Manu Shukla',
-    hostelName: hostelNames[2],
-    roomNo: '123',
+    email: route.params?.userEmail,
+    name: route.params?.userName,
+    hostelName: {title: '', id: ''},
+    roomNo: '',
   });
 
-  const handleEdit = () => {
-    setIsEditing(!isEditing);
-  };
   const signOut = async () => {
     try {
       await GoogleSignin.signOut();
@@ -60,24 +54,33 @@ const Profile = () => {
     }
   };
 
+  useEffect(() => {
+    Snackbar.show({
+      text: 'User Not Registered! Register First.',
+      duration: Snackbar.LENGTH_LONG,
+    });
+  }, [userData]);
+
   return (
     <AutocompleteDropdownContextProvider>
-      <Appbar.Header>
-        <Appbar.Content title="My Profile" />
-      </Appbar.Header>
       <View style={styles.container}>
-        <Avatar.Text size={100} label="XD" />
+        <View>
+          <Text style={styles.headingTxt}>Signup</Text>
+        </View>
         <Formik
-          validationSchema={ProfileFormSchema}
+          validationSchema={SignupFormSchema}
           initialValues={userData}
           onSubmit={values => {
-            setIsEditing(false);
+            setLoading(true);
             console.log(values);
+            setTimeout(() => {
+              setLoading(false);
+              navigation.replace('Main');
+            }, 2000);
           }}
           onReset={values => {
-            signOut().then(r => {
-              navigation.replace('Splash');
-            });
+            signOut();
+            navigation.replace('Login');
           }}>
           {({
             handleChange,
@@ -97,7 +100,7 @@ const Profile = () => {
                 label="Your Email"
                 editable={false}
                 style={styles.formFields}
-                mode="outlined"
+                mode={'outlined'}
               />
 
               <TextInput
@@ -105,74 +108,59 @@ const Profile = () => {
                 onBlur={handleBlur('name')}
                 value={values.name}
                 label="Your Name"
-                editable={isEditing}
+                editable={false}
                 style={styles.formFields}
-                mode="outlined"
+                mode={'outlined'}
               />
-              {isEditing ? (
-                <>
-                  <Text style={styles.placeholder}>Hostel Name</Text>
-
-                  <AutocompleteDropdown
-                    clearOnFocus={true}
-                    onBlur={handleBlur('hostelName')}
-                    onChangeText={handleChange('hostelName')}
-                    initialValue={values.hostelName}
-                    onSelectItem={value => setFieldValue('hostelName', value)}
-                    textInputProps={{
-                      placeholder: 'Search Hostel',
-                      placeholderTextColor: 'black',
-                      style: {
-                        color: 'black',
-                      },
-                    }}
-                    dataSet={hostelNames}
-                    containerStyle={styles.dropdownContainer}
-                    inputContainerStyle={styles.inputContainer}
-                  />
-                </>
-              ) : (
-                <TextInput
-                  label="Hostel Name"
-                  value={values.hostelName.title}
-                  editable={false}
-                  mode={'outlined'}
-                />
-              )}
-
-              <View style={styles.hairline} />
-
+              <Text style={styles.placeholder}>Hostel Name</Text>
+              <AutocompleteDropdown
+                clearOnFocus={true}
+                onBlur={handleBlur('hostelName')}
+                onChangeText={handleChange('hostelName')}
+                onSelectItem={value => setFieldValue('hostelName', value)}
+                textInputProps={{
+                  placeholder: 'Search Hostel',
+                  placeholderTextColor: 'black',
+                  style: {
+                    color: 'black',
+                  },
+                }}
+                dataSet={hostelNames}
+                containerStyle={styles.dropdownContainer}
+                inputContainerStyle={styles.inputContainer}
+                suggestionsListContainerStyle={styles.suggestionsListContainer}
+              />
               {touched.hostelName && errors.hostelName && (
-                <Text style={styles.errors}>{errors.hostelName.title}</Text>
+                <Text style={styles.errors}>{errors.hostelName}</Text>
               )}
               <TextInput
                 onChangeText={handleChange('roomNo')}
                 onBlur={handleBlur('roomNo')}
                 value={values.roomNo}
-                editable={isEditing}
                 keyboardType="number-pad"
                 label="Room No"
                 error={!!(touched.roomNo && errors.roomNo)}
                 style={styles.formFields}
-                mode="outlined"
+                mode={'outlined'}
               />
               {touched.roomNo && errors.roomNo && (
                 <Text style={styles.errors}>{errors.roomNo}</Text>
               )}
 
-              {isEditing ? (
-                <Button mode="contained" onPress={handleSubmit}>
-                  Save
-                </Button>
-              ) : (
-                <Button mode="contained" onPress={handleEdit}>
-                  Edit
-                </Button>
-              )}
+              <Button
+                loading={loading}
+                disabled={loading}
+                mode="contained"
+                style={styles.buttons}
+                icon={'login'}
+                onPress={handleSubmit}>
+                Sign Up
+              </Button>
               <Button
                 mode="contained-tonal"
                 disabled={loading}
                 style={styles.buttons}
+                icon={'logout'}
                 onPress={handleReset}>
                 Log Out
               </Button>
@@ -184,19 +172,15 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default SignupScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    margin: 8,
-  },
+  container: {},
   formContainer: {
     margin: 18,
-    width: 350,
   },
   formFields: {
-    marginVertical: 8,
+    marginVertical: 16,
   },
   headingTxt: {
     fontSize: 32,
@@ -206,11 +190,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   buttons: {
-    marginVertical: 10,
+    margin: 5,
   },
-  dropdownContainer: {
-    marginBottom: 10,
-  },
+  dropdownContainer: {},
+  suggestionsListContainer: {},
   inputContainer: {
     backgroundColor: 'white',
     borderRadius: 8,

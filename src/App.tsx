@@ -1,14 +1,13 @@
 import React from 'react';
-import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 // Screens
-import LoginScreen from './screens/LoginScreen';
-import SignupScreen from './screens/SignupScreen';
-import SplashScreen from './screens/SplashScreen';
-import MainScreen from './screens/MainScreen';
-
+import LoginScreen from './screens/BeforeLoginScreens/LoginScreen';
+import SignupScreen from './screens/BeforeLoginScreens/SignupScreen';
+import SplashScreen from './screens/BeforeLoginScreens/SplashScreen';
+import MainScreen from './screens/BeforeLoginScreens/MainScreen';
 
 export type RootStackParamList = {
   Splash: undefined;
@@ -24,7 +23,6 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
   return (
-
     <NavigationContainer>
       <Stack.Navigator
         initialRouteName="Splash"

@@ -1,9 +1,9 @@
-import { FoodData} from "..";
+import {FoodData} from '..';
 
-enum FoodType {
-    VEG = 'Veg',
-    NONVEG = 'Non-Veg',
-    EGG = 'Egg'
+export enum FoodType {
+  VEG = 'Veg',
+  NONVEG = 'Non-Veg',
+  EGG = 'Egg',
 }
 
 export const foodItems: FoodData[] = [
@@ -13,7 +13,7 @@ export const foodItems: FoodData[] = [
     description: 'Maggi with extra cheese',
     availability: true,
     foodType: FoodType.VEG,
-    imageUrl: 'https://reactnative.dev/img/tiny_logo.png'
+    imageUrl: 'https://reactnative.dev/img/tiny_logo.png',
   },
   {
     name: 'Plain Maggi',
@@ -21,17 +21,15 @@ export const foodItems: FoodData[] = [
     description: 'Maggi with only maggi masala',
     availability: true,
     foodType: FoodType.VEG,
-    imageUrl: 'https://reactnative.dev/img/tiny_logo.png'
-
+    imageUrl: 'https://reactnative.dev/img/tiny_logo.png',
   },
   {
     name: 'Masala Maggi',
     price: 30,
-    description: 'Maggi with extra masala and veggies kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk',
+    description: 'Maggi with extra masala and veggies',
     availability: true,
-    foodType:FoodType.VEG,
-    imageUrl: 'https://reactnative.dev/img/tiny_logo.png'
-
+    foodType: FoodType.VEG,
+    imageUrl: 'https://reactnative.dev/img/tiny_logo.png',
   },
   {
     name: 'Bread Omlette',
@@ -39,8 +37,7 @@ export const foodItems: FoodData[] = [
     description: 'Egg omlette with bread',
     availability: true,
     foodType: FoodType.EGG,
-    imageUrl: 'https://reactnative.dev/img/tiny_logo.png'
-
+    imageUrl: 'https://reactnative.dev/img/tiny_logo.png',
   },
   {
     name: 'Chicken Roll',
@@ -48,7 +45,6 @@ export const foodItems: FoodData[] = [
     description: 'Roll of chicken and veggies',
     availability: true,
     foodType: FoodType.NONVEG,
-    imageUrl: 'https://reactnative.dev/img/tiny_logo.png'
-
-  }
+    imageUrl: 'https://reactnative.dev/img/tiny_logo.png',
+  },
 ];

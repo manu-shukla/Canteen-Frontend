@@ -1,22 +1,16 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet} from 'react-native';
 import React from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import HomeScreen from './HomeScreen';
 import Profile from './Profile';
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
-import MyOrders from './MyOrders';
-
+import MyOrders from './OrdersScreen/MyOrders';
 
 const HomeTab = createMaterialBottomTabNavigator();
 
 const HomeScreenNav = () => {
   return (
-    <HomeTab.Navigator
-      initialRouteName="HomeScreen"
-      // activeColor="red"
-      // inactiveColor="blue"
-      // barStyle={{backgroundColor: 'black'}}
-    >
+    <HomeTab.Navigator initialRouteName="HomeScreen">
       <HomeTab.Screen
         name="HomeScreen"
         component={HomeScreen}
@@ -30,7 +24,6 @@ const HomeScreenNav = () => {
       <HomeTab.Screen
         name="Orders"
         component={MyOrders}
-
         options={{
           tabBarIcon: () => (
             <MaterialCommunityIcons name="rice" color="black" size={26} />

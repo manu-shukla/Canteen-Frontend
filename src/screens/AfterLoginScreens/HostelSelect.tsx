@@ -1,14 +1,11 @@
-import {Dimensions, FlatList, StyleSheet, Text, View} from 'react-native';
+import {FlatList, StyleSheet, View} from 'react-native';
 import React, {useState} from 'react';
 
-import {Button, ListItem} from '@react-native-material/core';
+import {ListItem} from '@react-native-material/core';
 import {hostelNames} from '../../constants/hostelNames';
 import {HostelData} from '../..';
-import {
-  NativeStackNavigationProp,
-  NativeStackScreenProps,
-} from '@react-navigation/native-stack';
-import {RootHomeStackParamList} from '../MainScreen';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootHomeStackParamList} from '../BeforeLoginScreens/MainScreen';
 import {useNavigation} from '@react-navigation/native';
 
 import {Searchbar} from 'react-native-paper';
@@ -17,12 +14,12 @@ const HostelSelect = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootHomeStackParamList>>();
 
-  const [currHostelList, setcurrHostelList] =
+  const [currHostelList, setCurrHostelList] =
     useState<HostelData[]>(hostelNames);
-  const [searchText, setSearchText  ] = useState<string>('');
+  const [searchText, setSearchText] = useState<string>('');
 
   const handleSearch = (text: string) => {
-    setcurrHostelList(
+    setCurrHostelList(
       hostelNames.filter(hostel => {
         return hostel.title.toLowerCase().includes(text.toLowerCase());
       }),
@@ -50,7 +47,7 @@ const HostelSelect = () => {
           renderItem={({item, index}) => {
             return (
               <ListItem
-                
+                style={styles.hostelListItem}
                 key={index}
                 onPress={() => handleHostelSelect(item)}
                 title={item.title}
@@ -65,4 +62,6 @@ const HostelSelect = () => {
 
 export default HostelSelect;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  hostelListItem: {},
+});

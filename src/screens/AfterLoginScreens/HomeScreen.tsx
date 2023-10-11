@@ -3,53 +3,35 @@ import {
   TouchableOpacity,
   View,
   Dimensions,
-  SectionList,
-  VirtualizedList,
   FlatList,
-  ScrollView,
-  Animated,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-
-import {ListItem} from '@react-native-material/core';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import HostelSelect from './HostelSelect';
-import {
-  NativeStackNavigationProp,
-  NativeStackScreenProps,
-} from '@react-navigation/native-stack';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {hostelNames} from '../../constants/hostelNames';
-import {RootHomeStackParamList} from '../MainScreen';
+import {RootHomeStackParamList} from '../BeforeLoginScreens/MainScreen';
 import {useNavigation, useRoute, RouteProp} from '@react-navigation/native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {foodItems} from '../../constants/foodItems';
-import {CartData, FoodData} from '../..';
-import {
-  Card,
-  Button,
-  Text,
-  Searchbar,
-  IconButton,
-  FAB,
-} from 'react-native-paper';
-import {black} from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
-import {inlineStyles} from 'react-native-svg';
 
-import {
-  getCount,
-  handleDecrement,
-  handleIncrement,
-  toDisplayCartButton,
-} from '../../handlers/cartHandler';
+import {Text, Searchbar, FAB} from 'react-native-paper';
+
 import MenuItemCard from '../../components/MenuItemCard';
+import {useCartContext} from '../../contexts/cartContext';
 
 type HomeScreenRouteProps = RouteProp<RootHomeStackParamList, 'HomeScreen'>;
+
+const dimensions = Dimensions.get('window');
 
 const HomeScreen = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootHomeStackParamList>>();
   const route = useRoute<HomeScreenRouteProps>();
+
+  const {cartButton, foodItemList, onSearchFoodList} = useCartContext();
+
+  const [hostelSelected, setHostelSelected] = useState(hostelNames[5].title);
+  const [searchQueryText, setSearchQueryText] = useState('');
 
   useEffect(() => {
     console.log(route.params?.hostelSelected);
@@ -58,49 +40,18 @@ const HomeScreen = () => {
     }
   }, [route.params?.hostelSelected]);
 
-  const [hostelSelected, setHostelSelected] = useState(hostelNames[5].title);
-
-  const [foodItemList, setFoodItemList] = useState<FoodData[]>(foodItems);
-
-  const [cartButton, setCartButton] = useState(false);
-
-  
-  const [cartData, setCartData] = useState<CartData[]>(
-    foodItems.map(item => {
-      const cartItemToAdd: CartData = {
-        name: item.name,
-        price: item.price,
-       
-        foodType: item.foodType,
-        quantity: 0,
-      };
-      return cartItemToAdd;
-    }),
-  );
-
-  // const [countOfCartItem, setcountOfCartItem] = useState(second)
-
   const handleHostelSelectNavigation = () => {
     navigation.replace('HostelSelect');
   };
 
-  const [searchQuery, setSearchQuery] = React.useState('');
-
   const onChangeSearch = (query: string) => {
-    setSearchQuery(query);
-    setFoodItemList(
-      foodItems.filter(item => {
-        return item.name.toLowerCase().includes(query.toLowerCase());
-      }),
-    );
+    setSearchQueryText(query);
+    onSearchFoodList(query);
   };
 
-  useEffect(() => {
-          setCartButton(toDisplayCartButton(cartData));
-
-  }, [cartData])
-
-
+  const handleCartButton = () => {
+    navigation.navigate('CartScreen');
+  };
   return (
     <View>
       <TouchableOpacity onPress={handleHostelSelectNavigation}>
@@ -124,33 +75,29 @@ const HomeScreen = () => {
         <Searchbar
           placeholder="Search Menu"
           onChangeText={onChangeSearch}
-          value={searchQuery}
+          value={searchQueryText}
         />
         {foodItemList.length ? (
           <View>
             <FlatList
               data={foodItemList}
-              renderItem={({item}) => (
-                <MenuItemCard
-                  item={item}
-                  cartData={cartData}
-                  setCartData={setCartData}
-                />
-              )}
-              keyExtractor={(item, index) => index.toString()} 
-              ListFooterComponent={<Text variant='bodyLarge' style={styles.endOfList}>End of List</Text>}
+              renderItem={({item}) => <MenuItemCard foodItem={item} />}
+              keyExtractor={(item, index) => index.toString()}
+              ListFooterComponent={
+                <Text variant="bodyLarge" style={styles.endOfList}>
+                  End of List
+                </Text>
+              }
               ListFooterComponentStyle={{height: 300, margin: 10}}
             />
             {cartButton ? (
-              <View style={{alignItems: 'center'}}>
+              <View style={styles.cartButtonContainer}>
                 <FAB
                   mode="elevated"
                   icon="cart"
+                  onPress={handleCartButton}
                   customSize={50}
-                  style={{
-                    position: 'absolute',
-                    bottom: 300,
-                  }}
+                  style={styles.cartButton}
                   animated={true}
                 />
               </View>
@@ -170,7 +117,7 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'black',
-    height: Dimensions.get('window').height,
+    height: dimensions.width,
   },
   hostelSelectedTxt: {
     color: 'black',
@@ -190,7 +137,15 @@ const styles = StyleSheet.create({
     marginTop: 15,
     fontSize: 18,
   },
+  cartButtonContainer: {
+    flex: 1,
+    alignItems: 'center',
+    width: Dimensions.get('window').width,
+    position: 'absolute',
+    bottom: 300,
+  },
+  cartButton: {},
   endOfList: {
     textAlign: 'center',
-  }
+  },
 });

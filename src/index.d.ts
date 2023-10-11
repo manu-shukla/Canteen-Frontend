@@ -3,22 +3,21 @@ export type HostelData = {
   title: string;
 };
 
-
 export type FoodData = {
-  name: string,
-  price: number,
-  description: string,
-  availability: boolean,
-  foodType: string,
-  imageUrl: string
-}
+  name: string;
+  price: number;
+  description: string;
+  availability: boolean;
+  foodType: string;
+  imageUrl: string;
+};
 
 export type CartData = {
-  name: string,
-  price: number,
-  quantity: number,
-  foodType: string,
-}
+  name: string;
+  price: number;
+  quantity: number;
+  foodType: string;
+};
 
 export type Orders = {
   orderId: number;
@@ -28,5 +27,4 @@ export type Orders = {
   hostel: HostelData | undefined;
   time: Date;
   orderStatus: string;
-}
- 
+};

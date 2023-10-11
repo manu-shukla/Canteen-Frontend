@@ -1,16 +1,14 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  FlatList,
-  RefreshControl,
- 
-} from 'react-native';
+import {StyleSheet, FlatList, RefreshControl} from 'react-native';
 import React, {useState} from 'react';
-import {OrdersContextType, useOrdersContext} from '../../../contexts/ordersContext';
+import {
+  OrdersContextType,
+  useOrdersContext,
+} from '../../../contexts/ordersContext';
+
 import {Orders} from '../../..';
 import OrderCard from '../../../components/OrderCard';
 import {OrderStatus} from '../../../constants/sampleOrders';
+import {Text} from 'react-native-paper';
 
 const PastOrders = () => {
   const [refreshing, setrefreshing] = useState<boolean>(false);
@@ -36,7 +34,11 @@ const PastOrders = () => {
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
-      ListFooterComponent={<Text>End of List</Text>}
+      ListFooterComponent={
+        <Text variant="bodyLarge" style={styles.endOfList}>
+          End of List
+        </Text>
+      }
       ListFooterComponentStyle={{height: 150}}
     />
   );
@@ -44,4 +46,8 @@ const PastOrders = () => {
 
 export default PastOrders;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  endOfList: {
+    textAlign: 'center',
+  },
+});
