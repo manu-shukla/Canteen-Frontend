@@ -13,8 +13,8 @@ export type RootStackParamList = {
   Splash: undefined;
   Login: undefined;
   Signup: {
-    userEmail: string;
-    userName: string;
+    userEmail: string | null;
+    userName: string | null;
   };
   Main: undefined;
 };
